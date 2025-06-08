@@ -1,36 +1,23 @@
-//By elrt(github) and elliktronic(discord)
+//elrt(elliktronic)
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
- 
-#define LINE_MAX 256
+#include <errno.h>
+#include <limits.h>
+
+#define KISS_LINE_MAX 256
 #define INCLUDE_DIRECTIVE "#include"
 #define MAX_LABELS 100
+#define MAX_INCLUDE_DEPTH 10
 
 typedef struct {
-    char name[LINE_MAX];
+    char name[KISS_LINE_MAX];
     long file_pos;
     int line_num;
-}  Label;
+} Label;
 
-int run_file(const char *filename, int *x);
-
-int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s <source.kiss>\n", argv[0]);
-        return 1;
-    }
-
-    int x = 0;
-    int result = run_file(argv[1], &x);
-    if (result != 0) {
-        fprintf(stderr, "Error: Failed to run the program.\n");
-        return 1;
-    }
-
-    return 0;
-}
+ int run_file(const char *filename, int *x, int depth);
 
 static char *ltrim(char *s) {
     while (isspace((unsigned char)*s)) s++;
@@ -44,22 +31,42 @@ static char *rtrim(char *s) {
     return s;
 }
 
-int run_file(const char *filename, int *x) {
+static int safe_strtol(const char *str, long *val) {
+    char *end;
+    errno = 0;
+    *val = strtol(str, &end, 10);
+    return (errno == 0 && end != str && *end == '\0');
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <source.kiss>\n", argv[0]);
+        return 1;
+    }
+
+    int x = 0;
+    return run_file(argv[1], &x, 0) ? 1 : 0;
+}
+
+int run_file(const char *filename, int *x, int depth) {
+    if (depth > MAX_INCLUDE_DEPTH) {
+        fprintf(stderr, "Error: Include depth exceeded (max %d)\n", MAX_INCLUDE_DEPTH);
+        return 1;
+    }
+
     FILE *fp = fopen(filename, "r");
     if (!fp) {
         fprintf(stderr, "Error: Cannot open file '%s'\n", filename);
         return 1;
     }
 
-    // First pass: collect all labels
-    Label labels[MAX_LABELS];
-    int label_count = 0;
-    char line[LINE_MAX];
-    int line_num = 0;
-    long file_pos = 0;
+   Label labels[MAX_LABELS];
+   int label_count = 0;
+   char line[KISS_LINE_MAX];
+   int line_num = 0;
 
     while (fgets(line, sizeof(line), fp)) {
-       line_num++;
+        line_num++;
         char *ptr = ltrim(line);
         rtrim(ptr);
 
@@ -80,39 +87,44 @@ int run_file(const char *filename, int *x) {
                 return 1;
             }
 
-            strncpy(labels[label_count].name, label_name, LINE_MAX-1);
+            strncpy(labels[label_count].name, label_name, sizeof(labels[0].name) - 1);
+            labels[label_count].name[sizeof(labels[0].name) - 1] = '\0';
+
+            long file_pos = ftell(fp);
+            if (file_pos == -1) {
+                fprintf(stderr, "%s:%d: Failed to get file position\n", filename, line_num);
+                fclose(fp);
+                return 1;
+            }
+
             labels[label_count].file_pos = file_pos;
             labels[label_count].line_num = line_num;
             label_count++;
         }
-
-        file_pos = ftell(fp);
     }
 
-    // Second pass: execute the program
     rewind(fp);
     line_num = 0;
     int y = 0;
 
     while (fgets(line, sizeof(line), fp)) {
-       line_num++;
-       char *ptr = ltrim(line);
-       rtrim(ptr);
+        line_num++;
+        char *ptr = ltrim(line);
+        rtrim(ptr);
 
-       if (*ptr == '\0') continue;
-
-
-       if (*ptr == ':') continue;
+        if (*ptr == '\0' || *ptr == ':') continue;
 
         if (*ptr == '#') {
             if (strncmp(ptr, INCLUDE_DIRECTIVE, strlen(INCLUDE_DIRECTIVE)) == 0) {
-                char include_file[LINE_MAX];
-               if (sscanf(ptr + strlen(INCLUDE_DIRECTIVE), " \"%255[^\"]\"", include_file) != 1) {
-                    fprintf(stderr, "%s:%d: Invalid include directive syntax.\n", filename, line_num);
+                char include_file[KISS_LINE_MAX];
+                char *start = ptr + strlen(INCLUDE_DIRECTIVE);
+                while (*start && *start != '"') start++;
+                if (*start != '"' || sscanf(start, "\"%255[^\"]\"", include_file) != 1) {
+                    fprintf(stderr, "%s:%d: Invalid include directive\n", filename, line_num);
                     fclose(fp);
                     return 1;
                 }
-                if (run_file(include_file, x) != 0) {
+                if (run_file(include_file, x, depth + 1) != 0) {
                     fclose(fp);
                     return 1;
                 }
@@ -127,7 +139,7 @@ int run_file(const char *filename, int *x) {
         }
 
         if (strncmp(ptr, "CI", 2) == 0) {
-           *x = getchar();
+            *x = getchar();
             continue;
         }
 
@@ -140,63 +152,95 @@ int run_file(const char *filename, int *x) {
                 p = ltrim(p);
                 if (*p == '\'') {
                     if (*(p+2) != '\'') {
-                        fprintf(stderr, "%s:%d: Invalid char literal syntax.\n", filename, line_num);
+                        fprintf(stderr, "%s:%d: Invalid char literal\n", filename, line_num);
                         fclose(fp);
                         return 1;
                     }
                     *x = (int)*(p+1);
                 } else {
-                    int val;
-                    if (sscanf(p, "%d", &val) != 1) {
-                        fprintf(stderr, "%s:%d: Invalid number for assignment.\n", filename, line_num);
+                    long val;
+                    if (!safe_strtol(p, &val)) {
+                        fprintf(stderr, "%s:%d: Invalid number\n", filename, line_num);
                         fclose(fp);
                         return 1;
                     }
-                    *x = val;
+                    *x = (int)val;
                 }
                 break;
             }
-            case 'I': *x += atoi(ptr + 1); break;
-            case 'D': *x -= atoi(ptr + 1); break;
+            case 'I':
+            case 'D':
+            case 'X':
+            case 'M': {
+                long val;
+                if (!safe_strtol(ptr + 1, &val)) {
+                    fprintf(stderr, "%s:%d: Invalid number\n", filename, line_num);
+                    fclose(fp);
+                    return 1;
+                }
+                if (cmd == 'I') *x += val;
+                else if (cmd == 'D') *x -= val;
+                else if (cmd == 'X') *x ^= val;
+                else *x *= val;
+                break;
+            }
             case 'P': printf("%d\n", *x); break;
             case 'C': *x = 0; break;
-            case 'X': *x ^= atoi(ptr + 1); break;
-            case 'M': *x *= atoi(ptr + 1); break;
             case 'S': { int t = *x; *x = atoi(ptr + 1); y = t; break; }
             case 'N': *x = -(*x); break;
             case 'B': *x = ~(*x); break;
             case 'Y': y = *x; break;
             case 'V': *x = y; break;
             case 'E': {
-                int val = atoi(ptr + 1);
+                long val;
+                if (!safe_strtol(ptr + 1, &val)) {
+                    fprintf(stderr, "%s:%d: Invalid number\n", filename, line_num);
+                    fclose(fp);
+                    return 1;
+                }
                 if (*x != val) {
-                    fgets(line, sizeof(line), fp);
+                    if (!fgets(line, sizeof(line), fp)) break;
                     line_num++;
                 }
                 break;
             }
             case 'L': {
-                int val = atoi(ptr + 1);
+                long val;
+                if (!safe_strtol(ptr + 1, &val)) {
+                    fprintf(stderr, "%s:%d: Invalid number\n", filename, line_num);
+                    fclose(fp);
+                    return 1;
+                }
                 if (*x >= val) {
-                    fgets(line, sizeof(line), fp);
+                    if (!fgets(line, sizeof(line), fp)) break;
                     line_num++;
                 }
                 break;
             }
             case 'G': {
-                char target[LINE_MAX];
-                if (sscanf(ptr + 1, "%255s", target) != 1) break;
-                
+                char target[KISS_LINE_MAX];
+                char *start = ptr + 1;
+                while (*start && isspace((unsigned char)*start)) start++;
+                char *end = start;
+                while (*end && !isspace((unsigned char)*end)) end++;
+                if (end == start) break;
+                strncpy(target, start, end - start);
+                target[end - start] = '\0';
+
                 int found = 0;
                 for (int i = 0; i < label_count; i++) {
                     if (strcmp(labels[i].name, target) == 0) {
-                        fseek(fp, labels[i].file_pos, SEEK_SET);
-                        line_num = labels[i].line_num - 1; // -1 because we'll increment in next iteration
+                        if (fseek(fp, labels[i].file_pos, SEEK_SET) != 0) {
+                            fprintf(stderr, "%s:%d: Seek failed\n", filename, line_num);
+                            fclose(fp);
+                            return 1;
+                        }
+                        line_num = labels[i].line_num - 1;
                         found = 1;
                         break;
                     }
                 }
-                
+
                 if (!found) {
                     fprintf(stderr, "%s:%d: Label '%s' not found\n", filename, line_num, target);
                     fclose(fp);
@@ -205,12 +249,12 @@ int run_file(const char *filename, int *x) {
                 break;
             }
             default:
-                fprintf(stderr, "%s:%d: Unknown command '%c'.\n", filename, line_num, cmd);
+                fprintf(stderr, "%s:%d: Unknown command '%c'\n", filename, line_num, cmd);
                 fclose(fp);
                 return 1;
         }
     }
 
     fclose(fp);
-   return 0;
+    return 0;
 }
