@@ -1,0 +1,45 @@
+#Keep It Simple Syntax Example Code
+A 10
+P
+I 5
+P
+D 3
+P
+C
+P
+A 'A'
+P
+X 42
+P
+M 2
+P
+N
+P
+B
+P
+Y
+A 100
+V
+P
+S 50
+P
+V
+P
+A 65
+:loop
+  CP
+  I 1
+  E 70
+    G end
+  G loop
+:end
+A 10
+CP
+A 13
+CP
+CI
+CP
+A 10
+CP
+A 13
+CP
