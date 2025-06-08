@@ -1,8 +1,8 @@
 
 
-# **KISS: The "Keep It Simple Syntax" Esolang**  
-*(Because why use 26 variables when one `x` will do?)*  
+# **KISS: The "Keep It Simple Syntax" Esolang** 
 ![screenshot](https://github.com/elrt/KISS-lang/blob/20c13b8220e37171ba0fded7e8745d203699ad5e/screenshots/2025-06-08_19-08.png)
+*(Because why use 26 variables when one `x` will do?)*  
 KISS is a minimalist, Turing-tarpit-adjacent esoteric language where all computation revolves around a **single sacred integer `x`**, worshipped like an ancient deity. Want to compute something? You shall manipulate `x`. Want to print something? You shall channel `x`. Want to include another file? You shall... well, you get it.
 
 ---
