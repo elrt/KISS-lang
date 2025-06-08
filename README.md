@@ -1,7 +1,6 @@
-![screenshot](https://github.com/elrt/KISS-lang/blob/20c13b8220e37171ba0fded7e8745d203699ad5e/screenshots/2025-06-08_19-08.png)
 
----
 
+```
 # **KISS: The "Keep It Simple Syntax" Esolang**  
 *(Because why use 26 variables when one `x` will do?)*  
 
@@ -26,15 +25,35 @@ All commands are **single uppercase letters**, followed by *optional* arguments.
 | `D` | **D**ecrement `x` | `D 3` → `x -= 3` |  
 | `P` | **P**rint `x` (as number) | `P` → Output: `42` |  
 | `CP` | **C**haracter **P**rint (ASCII) | `CP` → If `x=65`, prints `'A'` |  
-| `#include` | Import another `.kiss` file | `#include "ritual.kiss"` |  
+| `CI` | **C**haracter **I**nput (ASCII) | `CI` → `x = getchar()` |  
+| `C` | **C**lear `x` | `C` → `x = 0` |  
+| `X` | **X**OR `x` with value | `X 5` → `x ^= 5` |  
+| `M` | **M**ultiply `x` | `M 2` → `x *= 2` |  
+| `S` | **S**wap `x` and `y` | `S 5` → swaps `x` with `y`, then `x = 5` |  
+| `N` | **N**egate `x` | `N` → `x = -x` |  
+| `B` | **B**itwise NOT `x` | `B` → `x = ~x` |  
+| `Y` | Store `x` in `y` | `Y` → `y = x` |  
+| `V` | Retrieve `y` to `x` | `V` → `x = y` |  
+| `E` | **E**quals jump (skip next if `x != val`) | `E 5` → skip next line if `x != 5` |  
+| `L` | **L**ess-than jump (skip next if `x < val`) | `L 10` → skip next line if `x < 10` |  
+| `G` | **G**oto label | `G loop` → jumps to `:loop` |  
+| `#include` | Import another `.kiss` file | `#include "lib.kiss"` |  
 
-![screenshot](https://github.com/elrt/KISS-lang/blob/7eedafc533457114fe216964f4587275e1ea49ee/screenshots/2025-06-08_19-29.png)
----
-
-
-### **3. Sample Program (Hello World, Sort Of)**  
+### **3. Labels and Control Flow**  
+Labels are defined with `:` prefix:  
 ```plaintext
-# KISS-compliant "Hello World" (if you squint)
+:loop
+A 1
+P
+D 1
+E 0
+G loop
+```
+This prints numbers from 1 down to 0.
+
+### **4. Sample Program (Hello World)**  
+```plaintext
+# KISS-compliant "Hello World"
 A 72    # 'H'
 CP
 A 101   # 'e'
@@ -44,10 +63,24 @@ CP
 CP
 A 111   # 'o'
 CP
-A 10    # '\n' (newline)
+A 32    # ' '
+CP
+A 87    # 'W'
+CP
+A 111   # 'o'
+CP
+A 114   # 'r'
+CP
+A 108   # 'l'
+CP
+A 100   # 'd'
+CP
+A 10    # '\n'
 CP
 ```
-**Output:** `Hello` (with a newline)  
+**Output:** `Hello World`  
 
-*(Yes, this is painful. No, i won’t add strings.)*  
+*(Yes, this is painful. No, I won't add strings.)*  
 
+![screenshot](https://github.com/elrt/KISS-lang/blob/20c13b8220e37171ba0fded7e8745d203699ad5e/screenshots/2025-06-08_19-08.png)
+.
