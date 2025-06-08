@@ -18,6 +18,8 @@ KISS is a minimalist, Turing-tarpit-adjacent esoteric language where all computa
 ### **2. Command Syntax (Do More with Less!)**  
 All commands are **single uppercase letters**, followed by *optional* arguments.  
 
+![screenshot](https://github.com/elrt/KISS-lang/blob/b94a79762733243ec9be9a9e00c1bb8128e3115a/screenshots/2025-06-08_19-29.png)
+
 | Command | Effect | Example |  
 |---------|--------|---------|  
 | `A` | **A**ssign to `x` | `A 42` → `x = 42` <br> `A 'X'` → `x = 88` (ASCII) |  
@@ -81,6 +83,6 @@ CP
 **Output:** `Hello World`  
 
 *(Yes, this is painful. No, I won't add strings.)*  
-![screenshot](https://github.com/elrt/KISS-lang/blob/b94a79762733243ec9be9a9e00c1bb8128e3115a/screenshots/2025-06-08_19-29.png)
+
 
 .
