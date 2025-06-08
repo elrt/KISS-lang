@@ -2,7 +2,7 @@
 
 # **KISS: The "Keep It Simple Syntax" Esolang**  
 *(Because why use 26 variables when one `x` will do?)*  
-
+![screenshot](https://github.com/elrt/KISS-lang/blob/20c13b8220e37171ba0fded7e8745d203699ad5e/screenshots/2025-06-08_19-08.png)
 KISS is a minimalist, Turing-tarpit-adjacent esoteric language where all computation revolves around a **single sacred integer `x`**, worshipped like an ancient deity. Want to compute something? You shall manipulate `x`. Want to print something? You shall channel `x`. Want to include another file? You shall... well, you get it.
 
 ---
@@ -80,6 +80,6 @@ CP
 **Output:** `Hello World`  
 
 *(Yes, this is painful. No, I won't add strings.)*  
+![screenshot](https://github.com/elrt/KISS-lang/blob/b94a79762733243ec9be9a9e00c1bb8128e3115a/screenshots/2025-06-08_19-29.png)
 
-![screenshot](https://github.com/elrt/KISS-lang/blob/20c13b8220e37171ba0fded7e8745d203699ad5e/screenshots/2025-06-08_19-08.png)
 .
