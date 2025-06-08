@@ -28,7 +28,9 @@ All commands are **single uppercase letters**, followed by *optional* arguments.
 | `CP` | **C**haracter **P**rint (ASCII) | `CP` → If `x=65`, prints `'A'` |  
 | `#include` | Import another `.kiss` file | `#include "ritual.kiss"` |  
 
+![screenshot](https://github.com/elrt/KISS-lang/blob/7eedafc533457114fe216964f4587275e1ea49ee/screenshots/2025-06-08_19-29.png)
 ---
+
 
 ### **3. Sample Program (Hello World, Sort Of)**  
 ```plaintext
