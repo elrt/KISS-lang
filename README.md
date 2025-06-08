@@ -1,6 +1,5 @@
 
 
-```
 # **KISS: The "Keep It Simple Syntax" Esolang**  
 *(Because why use 26 variables when one `x` will do?)*  
 
