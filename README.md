@@ -1,4 +1,4 @@
-
+![screenshot](https://github.com/elrt/KISS-lang/blob/20c13b8220e37171ba0fded7e8745d203699ad5e/screenshots/2025-06-08_19-08.png)
 
 ---
 
