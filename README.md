@@ -13,7 +13,7 @@ KISS is a minimalist, Turing-tarpit-adjacent esoteric language where all computa
 
 *   **10-06-2025:**
     *   Added new commands and some bug fixes:p (commit: `c1bf16d`)
-      
+    *   Update example.kiss (commit: `7037b17`)
  
 
 ---
