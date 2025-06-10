@@ -1,45 +1,100 @@
-#Keep It Simple Syntax Example Code
+# KISS Program: Shows how each command works
+
+A 10          # X = 10 (Put 10 in X box)
+> 0           # Memory[0] = X (Store X in memory)
+A 5           # X = 5
+> 1           # Memory[1] = X
+Y             # Y = X (Copy X to Y)
+P             # Print X
 A 10
-P
-I 5
-P
-D 3
-P
-C
-P
-A 'A'
-P
-X 42
-P
-M 2
-P
-N
-P
-B
-P
-Y
-A 100
-V
-P
-S 50
-P
-V
-P
-A 65
-:loop
-  CP
-  I 1
-  E 70
-    G end
-  G loop
-:end
+CP            # New line
+
+< 0           # X = Memory[0] (Load from memory)
+I 2           # X = X + 2 (Increase X)
+P             # Print X
 A 10
-CP
-A 13
-CP
-CI
-CP
+CP            
+
+< 1           # X = Memory[1]
+D 3           # X = X - 3 (Decrease X)
+P             # Print X
 A 10
-CP
-A 13
-CP
+CP           
+
+< 1           # X = Memory[1]
+M 4           # X = X * 4 (Multiply X)
+P             # Print X
+A 10
+CP            
+
+< 0           # X = Memory[0]
+Q 2           # X = X / 2 (Divide X)
+P             # Print X
+A 10
+CP            
+
+< 0           # X = Memory[0]
+R 3           # X = X % 3 (Remainder)
+P             # Print X
+A 10
+CP            
+
+< 0           # X = Memory[0]
+X 7           # X = X XOR 7 (Bitwise XOR)
+P             # Print X
+A 10
+CP            
+
+< 0           # X = Memory[0]
+N             # X = -X (Negate)
+P             # Print X
+A 10
+CP            
+
+< 0           # X = Memory[0]
+B             # X = ~X (Bitwise NOT)
+P             # Print X
+A 10
+CP            
+
+V             # X = Y (Copy Y to X)
+P             # Print X
+A 10
+CP            
+
+< 1           # X = Memory[1]
+^             # X = X * X (Square)
+P             # Print X
+A 10
+CP           
+
+< 1           # X = Memory[1]
+t             # X = sqrt(X) (Square root)
+> 2           # Memory[2] = X
+< 2           # X = Memory[2]
+P             # Print X
+A 10
+CP            
+
+? 10          # X = Random (0-9)
+P             # Print X
+A 10
+CP           
+
+E 5           # If X == 5
+A 99          #   X = 99
+G end         #   Goto end
+:label        # Label (unused)
+A 77          # X = 77
+P             # Print X
+A 10
+CP           
+
+:end          # End label
+C             # X = 0 (Clear X)
+P             # Print X
+A 10
+CP            
+
+CI            # X = Input (Get character code)
+P             # Print X
