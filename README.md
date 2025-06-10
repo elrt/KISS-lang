@@ -7,7 +7,16 @@ p.s https://esolangs.org/wiki/Keep-It-Simple-Syntax
 KISS is a minimalist, Turing-tarpit-adjacent esoteric language where all computation revolves around a **single sacred integer `x`**, worshipped like an ancient deity. Want to compute something? You shall manipulate `x`. Want to print something? You shall channel `x`. Want to include another file? You shall... well, you get it.
 
 ---
+## Changelog
 
+**Recent Changes:**
+
+*   **10-06-2025:**
+    *   Added new commands and some bug fixes:p (commit: `c1bf16d`)
+      
+ 
+
+---
 ## **Language Specs (Because Even Esolangs Need Rules)**  
 
 ### **1. The One True Variable**  
